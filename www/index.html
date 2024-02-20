@@ -139,7 +139,7 @@
 			  var celular_registroinicial = document.getElementById("celular_registroinicial").value;
 			  var departamento_registroinicial = document.getElementById("departamento_registroinicial").value;
 			  var ciudad_registroinicial = document.getElementById("ciudad_registroinicial").value;
-              if (nombre_registroinicial == '' || apellido_registroinicial == '' || correo_registroinicial == '' || contrasena_registroinicial == '' || rep_contrasena_registroinicial == '' || celular_registroinicial == '' || departamento_registroinicial == '' || ciudad_registroinicial == '') {// || profesion_registroinicial == '' || genero_registroinicial == '' || fechanacimiento_registroinicial == '' || pais_registroinicial == '' || departamento_registroinicial == '' || ciudad_registroinicial == ''
+              if (nombre_registroinicial == '' || apellido_registroinicial == '' || fechanacimiento_registroinicial == '' || correo_registroinicial == '' || contrasena_registroinicial == '' || rep_contrasena_registroinicial == '' || celular_registroinicial == '' || departamento_registroinicial == '' || ciudad_registroinicial == '') {// || profesion_registroinicial == '' || genero_registroinicial == '' || fechanacimiento_registroinicial == '' || pais_registroinicial == '' || departamento_registroinicial == '' || ciudad_registroinicial == ''
                 swal({
                   title: '',
                   text: 'Debes llenar todos los campos, verifícalos',
@@ -166,7 +166,7 @@
 				  //*************************
                   var xmlhttp;
                   xmlhttp = new XMLHttpRequest();
-                  xmlhttp.open("GET", ruta + "/webservice_appv2.php?opc=10&idioma_global=" + idioma_global + "&nombre_registroinicial=" + nombre_registroinicial + "&apellido_registroinicial=" + apellido_registroinicial + "&correo_registroinicial=" + correo_registroinicial + "&contrasena_registroinicial=" + contrasena_registroinicial + "&celular_registroinicial=" + celular_registroinicial + "&departamento_registroinicial=" + departamento_registroinicial + "&ciudad_registroinicial=" + ciudad_registroinicial, false);
+                  xmlhttp.open("GET", ruta + "/webservice_appv2.php?opc=10&idioma_global=" + idioma_global + "&nombre_registroinicial=" + nombre_registroinicial + "&apellido_registroinicial=" + apellido_registroinicial + "&fechanacimiento_registroinicial=" + fechanacimiento_registroinicial + "&correo_registroinicial=" + correo_registroinicial + "&contrasena_registroinicial=" + contrasena_registroinicial + "&celular_registroinicial=" + celular_registroinicial + "&departamento_registroinicial=" + departamento_registroinicial + "&ciudad_registroinicial=" + ciudad_registroinicial, false);
                   xmlhttp.onreadystatechange = function () {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                       alert("Gracias por tu registro, bienvenid@");
@@ -623,13 +623,16 @@
                         document.getElementById("correo_inicarsesion").value = '';
                         document.getElementById("contrasena_iniciarsesion").value = '';
                       } else {
-                        window.localStorage.setItem("registroinicial", xmlhttp.responseText);
+						var respuesta_fin = xmlhttp.responseText;
+						respuesta_fin = respuesta_fin.split(";");
+                        window.localStorage.setItem("registroinicial", respuesta_fin[0]);
+						window.localStorage.setItem("id_registroinicial", respuesta_fin[1]);
                         swal({
                           title: '',
                           text: 'Bienvenido',
                           timer: 3000,
                         });
-                        asignarnombre_menu(xmlhttp.responseText);
+                        asignarnombre_menu(respuesta_fin[0]);
                         location.href = "#PgCategorias";
 						traer_banners_principal();
                       }
@@ -760,9 +763,12 @@
                         alert("ERROR: Error Interno, Intentalo de nuevo");
                         document.getElementById("contrasena_cambiodeclave").focus();
                       } else {
-                        window.localStorage.setItem("registroinicial", xmlhttp.responseText);
+						var respuesta_fin = xmlhttp.responseText;
+						respuesta_fin = respuesta_fin.split(";");
+                        window.localStorage.setItem("registroinicial", respuesta_fin[0]);
+						window.localStorage.setItem("id_registroinicial", respuesta_fin[1]);
                         alert("Bienvenid@");
-                        asignarnombre_menu(xmlhttp.responseText);
+                        asignarnombre_menu(respuesta_fin[0]);
                         document.getElementById("contrasena_cambiodeclave").value = "";
                         document.getElementById("rep_contrasena_cambiodeclave").value = "";
                         document.getElementById("correo_olvidoclave").value = "";
@@ -796,6 +802,7 @@
                 var observacionesconfirmar = document.getElementById("observacionesconfirmar").value;
                 var cadena_parawhatsapppedido = document.getElementById("cadena_parawhatsapppedido").value;
                 var promocionescarrito = window.localStorage.getItem("promocionescarrito");
+				var id_registroinicial = window.localStorage.getItem("id_registroinicial");
                 var tpc_movil_establecimiento_confirmarpedido = document.getElementById("tpc_movil_establecimiento_confirmarpedido").value;
                 var enviofinal = 'Cordial Saludo%0A%0AQuiero hacerte un pedido con los siguientes datos:%0A%0A';
                 if (nombreconfirmar != '' && direccionconfirmar != '' && telefonoconfirmar != '' && metodopagoconfirmar != '' && metodoentregaconfirmar != '' && observacionesconfirmar != '') {
@@ -810,7 +817,7 @@
                   if (result) {
                     //ENVIAR PEDIDO PARA ESTADISTICAS ==>
                     var xmlhttp = new XMLHttpRequest();
-                    xmlhttp.open("GET", ruta + "/webservice_appv2.php?opc=14&promocionescarrito=" + promocionescarrito, false);
+                    xmlhttp.open("GET", ruta + "/webservice_appv2.php?opc=14&promocionescarrito=" + promocionescarrito + "&id_registroinicial=" + id_registroinicial, false);
                     xmlhttp.onreadystatechange = function () {
                       if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                         //SI SE ENVIO NO SE HACE NADA, YA SE REGISTRO TODO BIEN
@@ -2188,12 +2195,18 @@
                 <input type="text" name="apellido_registroinicial"
                     id="apellido_registroinicial" class="form-control" style="width:100%" data-role="none"
                     placeholder="Apellido">
-                  <input type="number" name="celular_registroinicial"
-                        id="celular_registroinicial" class="form-control" style="width:100%" data-role="none"
-                        placeholder="Celular">
-                    <input type="email" name="correo_registroinicial" id="correo_registroinicial"
-                        class="form-control" style="width:100%" data-role="none"
-                        placeholder="Correo electrónico">
+                <input type="date" name="fechanacimiento_registroinicial"
+                id="fechanacimiento_registroinicial" class="form-control" style="width:100%" data-role="none"
+                placeholder="Fecha Nacimiento">
+
+
+                
+                <input type="number" name="celular_registroinicial"
+                      id="celular_registroinicial" class="form-control" style="width:100%" data-role="none"
+                      placeholder="Celular">
+                <input type="email" name="correo_registroinicial" id="correo_registroinicial"
+                    class="form-control" style="width:100%" data-role="none"
+                    placeholder="Correo electrónico">
 						<select name="departamento_registroinicial" id="departamento_registroinicial" class="form-control" data-role="none">
 							<option value="" selected="selected">Departamento......</option>
 							<option value="Amazonas">Amazonas</option>
@@ -2217,7 +2230,7 @@
 							<option value="La Guajira">La Guajira</option>
 							<option value="Magdalena">Magdalena</option>
 							<option value="Meta">Meta</option>
-							<option value="Nari�o">Nari�o</option>
+							<option value="Nari�o">Nari�o</option>
 							<option value="Norte De Santander">Norte De Santander</option>
 							<option value="Putumayo">Putumayo</option>
 							<option value="Quindio">Quindio</option>
@@ -2252,7 +2265,7 @@
 							<option value="Pasto">Pasto</option>
 							<option value="Pereira">Pereira</option>
 							<option value="Popayan">Popayan</option>
-							<option value="Puerto Carre�o">Puerto Carre�o</option>
+							<option value="Puerto Carre�o">Puerto Carre�o</option>
 							<option value="Quibdo">Quibdo</option>
 							<option value="Riohacha">Riohacha</option>
 							<option value="San Andres">San Andres</option>
@@ -2264,31 +2277,31 @@
 							<option value="Villavicencio">Villavicencio</option>
 							<option value="Yopal">Yopal</option>
 						</select>
-                          <div class="input-group" data-role="none" style="border-radius: 10px;">
-                            <input type="password" name="contrasena_registroinicial" id="contrasena_registroinicial"
-                            class="form-control" data-role="none" placeholder="Contraseña">
-                            <i class="bi bi-eye-slash" id="togglePasswordRegister"></i>
-                          </div>
-                          
-                        
-                    
-                        
-                          <div class="input-group" data-role="none">
-                            <input type="password" name="rep_contrasena_registroinicial" id="rep_contrasena_registroinicial"
-                            class="form-control" data-role="none" placeholder="Confirmar contraseña">
-                            <i class="bi bi-eye-slash" id="togglePasswordRegisterConfirm"></i>
-                          </div>
-                        <br>
-                
-                        
-                        <p style="color: white; font-size: 0.9em ; width: 100%; " class="align-middle"><input type="checkbox" data-role="none" id="checkaceptoterminos1" value="1"/><span>&nbsp;Estoy de
-                          acuerdo con las
-                          <a onclick="location.href='https://guiakmymedio.com.co/index.php/terminosycondiciones';" target="_blank">Pol&iacute;ticas de Tratamiento de Datos / términos y condiciones</a></span></p>                
+            <div class="input-group" data-role="none" style="border-radius: 10px;">
+              <input type="password" name="contrasena_registroinicial" id="contrasena_registroinicial"
+              class="form-control" data-role="none" placeholder="Contraseña">
+              <i class="bi bi-eye-slash" id="togglePasswordRegister"></i>
+            </div>
+            
+          
+      
+          
+            <div class="input-group" data-role="none">
+              <input type="password" name="rep_contrasena_registroinicial" id="rep_contrasena_registroinicial"
+              class="form-control" data-role="none" placeholder="Confirmar contraseña">
+              <i class="bi bi-eye-slash" id="togglePasswordRegisterConfirm"></i>
+            </div>
+          <br>
+  
+          
+          <p style="color: white; font-size: 0.9em ; width: 100%; " class="align-middle"><input type="checkbox" data-role="none" id="checkaceptoterminos1" value="1"/><span>&nbsp;Estoy de
+            acuerdo con las
+            <a onclick="location.href='https://guiakmymedio.com.co/index.php/terminosycondiciones';" target="_blank">Pol&iacute;ticas de Tratamiento de Datos / términos y condiciones</a></span></p>                
 
-                          <input type="submit" id="btsubmit_registroinicial" value="Registrarme"
-                          class="btn btn-dark" style="width:100%;" data-role="none"
-                          onclick="enviaregistroinicial()">
-                      <div id="resultado_registroinicial"></div>
+            <input type="submit" id="btsubmit_registroinicial" value="Registrarme"
+            class="btn btn-dark" style="width:100%;" data-role="none"
+            onclick="enviaregistroinicial()">
+        <div id="resultado_registroinicial"></div>
 
                       
                   
@@ -2823,6 +2836,16 @@ Si usted desea mayor informaci&oacute;n sobre el manejo de sus datos personales 
                               <div style="width:50%">
                                 <input type="radio" id="tarjeta" name="metodopagoconfirmar" value="Tarjeta">
                                 <label for="tarjeta"><div id="tarjetametodoconfirmar">Tarjeta</div></label>
+                              </div>
+                          </div>
+						  <div style="display: flex;">
+                              <div style="width:50%">
+                                <input type="radio" id="nequi" name="metodopagoconfirmar" value="Efectivo">
+                                <label for="nequi"><div id="nequimetodoconfirmar">Nequi</div></label>
+                              </div>
+                              <div style="width:50%">
+                                <input type="radio" id="daviplata" name="metodopagoconfirmar" value="Tarjeta">
+                                <label for="daviplata"><div id="daviplatametodoconfirmar">Daviplata</div></label>
                               </div>
                           </div>
                           <br> 
